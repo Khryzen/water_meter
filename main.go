@@ -1,9 +1,16 @@
 package main
 
-import "github.com/uadmin/uadmin"
+import (
+	"net/http"
+
+	"github.com/mbdeguzman/water_district/views"
+	"github.com/uadmin/uadmin"
+)
 
 func main() {
 	uadmin.Register()
+
+	http.HandleFunc("/", uadmin.Handler(views.PageHandlers))
 	uadmin.Port = 8080
 	uadmin.RootURL = "/uadmin/"
 
