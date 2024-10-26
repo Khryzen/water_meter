@@ -7,6 +7,7 @@ type Device struct {
 	SerialNumber string
 	Deployed     bool
 	Active       bool
+	Assigned     bool
 }
 
 func (d *Device) String() string {

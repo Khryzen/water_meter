@@ -10,5 +10,7 @@ type Client struct {
 	Landmark      string
 	EmailAddress  string
 	ContactNumber string
+	Device        Device
+	DeviceID      uint
 	Active        bool
 }

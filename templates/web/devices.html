@@ -148,7 +148,10 @@
         title: "New Device",
         text: "New device saved!",
         icon: "success",
-        timer: 2500
+        timer: 2500,
+        willClose: () => {
+          window.location.reload();
+        }
       });
     })
   }

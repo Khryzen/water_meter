@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ul class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">
-          <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+          <span><button class="btn btn-primary" onclick="newClient()">New Client</button></span>
         </li>
       </ul>
     </nav>
@@ -29,28 +29,27 @@
                   <th>Landmark</th>
                   <th>Email Address</th>
                   <th>Contact Number</th>
+                  <th>Device</th>
                   <th>Active</th>
                 </tr>
               </thead>
               <tbody>
+                {{ range .Clients }}
                 <tr>
-                  <td>David</td>
-                  <td>Grey</td>
-                  <td>Address</td>
-                  <td>Landmark</td>
-                  <td>email@email.com</td>
-                  <td>091234567</td>
+                  <td>{{ .FirstName }}</td>
+                  <td>{{ .LastName }}</td>
+                  <td>{{ .Address }}</td>
+                  <td>{{ .Landmark }}</td>
+                  <td>{{ .EmailAddress }}</td>
+                  <td>{{ .ContactNumber }}</td>
+                  <td>{{ .Device.SerialNumber }}</td>
+                  {{ if .Active }}
                   <td><label class="badge badge-gradient-success">ACTIVE</label></td>
-                </tr>
-                <tr>
-                  <td>Marina</td>
-                  <td>Michel</td>
-                  <td>Address</td>
-                  <td>Landmark</td>
-                  <td>email@email.com</td>
-                  <td>091234567</td>
+                  {{ else }}
                   <td><label class="badge badge-gradient-danger">INACTIVE</label></td>
+                  {{ end }}
                 </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
@@ -59,4 +58,152 @@
     </div>
   </div>
 </div>
+
+<!-- New Client Modal -->
+<div class="modal fade" id="newClientModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Client</h5>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="firstname">First Name</label>
+                <input type="text" name="firstname" id="firstname" class="form-control">
+              </div>
+            </div>
+            <div class="col-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" name="lastname" id="lastname" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" name="address" id="address" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="landmark">Landmark</label>
+            <input type="text" name="landmark" id="landmark" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="text" name="email" id="email" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="contactNumber">Contact Number</label>
+            <input type="text" name="contactNumber" id="contactNumber" class="form-control">
+          </div>
+          <div class="row">
+            <div class="col-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="device">Device</label>
+                <select name="device" id="device" class="form-control">
+                  {{ range .Devices }}
+                  <option value="{{ .ID }}">{{ .SerialNumber }}</option>
+                  {{ end }}
+                </select>
+              </div>
+            </div>
+            <div class="col-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="active">Active</label>
+                <select name="active" id="active" class="form-control">
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveNewClient()">Save changes</button>
+        <button type="button" class="btn btn-secondary" onclick="closeClientModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "script" }}
+<script>
+  function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  }
+
+  function parseStringToBool(string) {
+    if (typeof string !== "string") return Boolean(string);
+    const lowerStr = string.trim().toLowerCase();
+    if (lowerStr === "true" || lowerStr === "1") return true;
+    if (lowerStr === "false" || lowerStr === "0") return false;
+    return undefined;
+  } 
+
+  function newClient(){
+    $('#newClientModal').modal('show');
+  }
+
+  function closeClientModal(){
+    $('#newClientModal').modal('hide');
+  }
+
+  function saveNewClient(){
+    let formBody = new FormData();
+    formBody.append("_first_name", $('#firstname').val())
+    formBody.append("_last_name", $('#lastname').val())
+    formBody.append("_address", $('#address').val())
+    formBody.append("_landmark", $('#landmark').val())
+    formBody.append("_email_address", $('#email').val())
+    formBody.append("_contact_number", $('#email').val())
+    formBody.append("_device_id", $('#device').val())
+    formBody.append("_active", parseStringToBool($('#active').val()))
+
+    fetch('/uadmin/api/d/client/', {
+      method: "POST",
+      headers: {
+        "X-CSRF-TOKEN": getCookie('session')
+      },
+      body: formBody,
+    }).then(resp => {
+      return resp.json();
+    }).then(resp => {
+      let deviceEdit = new FormData
+      deviceEdit.append('_assigned', true)
+      fetch('/uadmin/api/d/device/'+$('#device').val()+'/',{
+        method: "PUT",
+        headers: {
+          "X-CSRF-TOKEN": getCookie('session')
+        },
+        body: deviceEdit,
+      }).then(res =>{
+        return res.json()
+      }).then(res =>{
+        $('#newClientModal').modal('hide');
+        Swal.fire({
+          title: "New Client",
+          text: "New client saved!",
+          icon: "success",
+          timer: 2500,
+          willClose: () => {
+            window.location.reload();
+          }
+        });
+      })
+    })
+  }
+</script>
 {{ end }}
