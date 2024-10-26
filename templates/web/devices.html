@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ul class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">
-          <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+          <span><button class="btn btn-primary" onclick="newDevice()">New Device</button></span>
         </li>
       </ul>
     </nav>
@@ -29,24 +29,27 @@
                 </tr>
               </thead>
               <tbody>
+                {{ range .Devices }}
                 <tr>
                   <td>
-                    David Grey
+                    {{ .SerialNumber }}
                   </td>
-                  <td> <label class="badge badge-gradient-info">ON STOCK</label> </td>
                   <td>
+                    {{ if .Deployed }}
+                    <label class="badge badge-gradient-success">DEPLOYED</label>
+                    {{ else }}
+                    <label class="badge badge-gradient-warning">ON STOCK</label>
+                    {{ end }}
+                  </td>
+                  <td>
+                    {{ if .Active }}
                     <label class="badge badge-gradient-success">ACTIVE</label>
+                    {{ else }}
+                    <label class="badge badge-gradient-danger">INACTIVE</label>
+                    {{ end }}
                   </td>
                 </tr>
-                <tr>
-                  <td>
-                    Marina Michel
-                  </td>
-                  <td> <label class="badge badge-gradient-success">DEPLOYED</label> </td>
-                  <td>
-                    <label class="badge badge-gradient-info">ON HOLD</label>
-                  </td>
-                </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
@@ -55,4 +58,99 @@
     </div>
   </div>
 </div>
+
+<!-- New Device Modal -->
+<div class="modal fade" id="newDeviceModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Device</h5>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="form-group">
+            <label for="serialNumber">Serial Number</label>
+            <input type="text" name="serialNumber" id="serialNumber" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="deployed">Deployment Status</label>
+            <select class="form-control" id="deployed" name="deployed">
+              <option value="true">Deployed</option>
+              <option value="false">On Stock</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="active">Status</label>
+            <select class="form-control" id="active" name="active">
+              <option value="true">Active</option>
+              <option value="false">On Hold</option>
+            </select>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveNewDevice()">Save changes</button>
+        <button type="button" class="btn btn-secondary" onclick="closeDeviceModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+{{ define "script" }}
+<script>
+  function getCookie(name){
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  }
+
+  function parseStringToBool(string) {
+      if (typeof string !== "string") return Boolean(string);
+      const lowerStr = string.trim().toLowerCase();
+      if (lowerStr === "true" || lowerStr === "1") return true;
+      if (lowerStr === "false" || lowerStr === "0") return false;
+      return undefined;
+    }
+
+  function newDevice(){
+    $('#newDeviceModal').modal('show');
+  }
+
+  function closeDeviceModal(){
+    $('#newDeviceModal').modal('hide');
+  }
+
+  function saveNewDevice(){
+    let formBody = new FormData();
+    formBody.append("_serial_number", $('#serialNumber').val())
+    formBody.append("_deployed", parseStringToBool($('#deployed').val()))
+    formBody.append("_active", parseStringToBool($('#active').val()))
+
+    fetch('/uadmin/api/d/device/', {
+      method: "POST",
+      headers:{
+        "X-CSRF-TOKEN": getCookie('session')
+      },
+      body: formBody,
+    }).then(resp => {
+      return resp.json();
+    }).then(resp =>{
+      console.log(resp)
+      $('#newDeviceModal').modal('hide');
+      Swal.fire({
+        title: "New Device",
+        text: "New device saved!",
+        icon: "success",
+        timer: 2500
+      });
+    })
+  }
+</script>
 {{ end }}
