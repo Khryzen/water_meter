@@ -1,9 +1,11 @@
 package main
 
 import (
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/mbdeguzman/water_district/models"
 	"github.com/tarm/serial"
 	"github.com/uadmin/uadmin"
 )
@@ -48,13 +50,23 @@ func Readings() {
 		// Print only non-empty data
 		if len(processed) > 0 {
 			uadmin.Trail(uadmin.INFO, "%s", processed)
-			// date := strings.Split(processed, ":")[0]
-			// device_serial := strings.Split(processed, ":")[1]
-			// start := strings.Split(processed, ":")[2]
-			// end := strings.Split(processed, ":")[3]
-			// reading := models.Reading{}
-			// device := models.Device{}
-			// client := models.Client{}
+			date := strings.Split(processed, ":")[0]
+			device_serial := strings.Split(processed, ":")[1]
+			start := strings.Split(processed, ":")[2]
+			end := strings.Split(processed, ":")[3]
+			reading := models.Reading{}
+			device := models.Device{}
+			client := models.Client{}
+
+			reading.DateString = date
+			reading.Beginning, _ = strconv.ParseFloat(start, 64)
+			reading.Ending, _ = strconv.ParseFloat(end, 64)
+
+			uadmin.Get(&device, "serial_number = ?", device_serial)
+			uadmin.Get(&client, "device_id = ?", device.ID)
+			reading.DeviceID = device.ID
+
+			uadmin.Save(&reading)
 		}
 
 		// Clear the buffer
