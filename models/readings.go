@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/uadmin/uadmin"
@@ -9,6 +10,9 @@ import (
 type Reading struct {
 	uadmin.Model
 	DateString  string
+	Month       int
+	Day         int
+	Year        int
 	Date        time.Time
 	Device      Device
 	DeviceID    uint
@@ -20,7 +24,15 @@ type Reading struct {
 }
 
 func (r *Reading) Save() {
-	layout := "01022006" // Parsing layout for MMDDYYYY
+	layout := "01022006"
+
+	month, _ := strconv.ParseInt(r.DateString[0:2], 10, 64)
+	day, _ := strconv.ParseInt(r.DateString[2:4], 10, 64)
+	year, _ := strconv.ParseInt(r.DateString[4:8], 10, 64)
+
+	r.Month = int(month)
+	r.Day = int(day)
+	r.Year = int(year)
 
 	// Parse the date string
 	parsedDate, err := time.Parse(layout, r.DateString)
