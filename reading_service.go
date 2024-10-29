@@ -66,7 +66,7 @@ func Readings() {
 			uadmin.Get(&client, "device_id = ?", device.ID)
 			reading.DeviceID = device.ID
 
-			uadmin.Save(&reading)
+			reading.Save()
 		}
 
 		// Clear the buffer
