@@ -17,8 +17,10 @@ func main() {
 		models.Payment{},
 		models.Reading{},
 	)
+	go ReadingService()
 
 	http.HandleFunc("/", uadmin.Handler(views.PageHandlers))
+
 	uadmin.Port = 8080
 	uadmin.RootURL = "/uadmin/"
 

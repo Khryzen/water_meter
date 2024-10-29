@@ -4,11 +4,12 @@ import "github.com/uadmin/uadmin"
 
 type Reading struct {
 	uadmin.Model
-	Device          Device
-	DeviceID        uint
-	BillingPeriod   BillingPeriod
-	BillingPeriodID uint
-	Beginning       float64
-	Ending          float64
-	Consumption     float64
+	DateString  string
+	Device      Device
+	DeviceID    uint
+	Beginning   float64
+	Ending      float64
+	Consumption float64
+	Client      Client
+	ClientID    uint
 }
