@@ -41,5 +41,7 @@ func (r *Reading) Save() {
 		return
 	}
 	r.Date = parsedDate
+
+	r.Consumption = r.Ending - r.Beginning
 	uadmin.Save(r)
 }

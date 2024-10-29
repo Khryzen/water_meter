@@ -24,27 +24,22 @@
               <thead>
                 <tr>
                   <th>Device</th>
-                  <th>BillingPeriod</th>
+                  <th>Date</th>
                   <th>Beginning</th>
                   <th>Ending</th>
                   <th>Consumption</th>
                 </tr>
               </thead>
               <tbody>
+                {{ range .Readings }}
                 <tr>
-                  <td>ASDREWQ</td>
-                  <td>03-22-2023</td>
-                  <td>12</td>
-                  <td>16</td>
-                  <td>14</td>
+                  <td>{{ .Device.SerialNumber }}</td>
+                  <td>{{ .Month }}/{{ .Day }}/{{ .Year }}</td>
+                  <td>{{ .Beginning }}</td>
+                  <td>{{ .Ending }}</td>
+                  <td>{{ .Consumption }}</td>
                 </tr>
-                <tr>
-                  <td>ASDREWQ</td>
-                  <td>03-22-2023</td>
-                  <td>12</td>
-                  <td>16</td>
-                  <td>14</td>
-                </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
