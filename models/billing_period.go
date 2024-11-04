@@ -12,3 +12,5 @@ type BillingPeriod struct {
 	Multiplier float64
 	DueDate    time.Time
 }
+
+// Create a save function that will generate the bills

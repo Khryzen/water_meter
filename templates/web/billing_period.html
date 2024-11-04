@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ul class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">
-          <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+          <span><button class="btn btn-primary" onclick="newBillingPeriod()">New Billing Period</button></span>
         </li>
       </ul>
     </nav>
@@ -29,16 +29,13 @@
                 </tr>
               </thead>
               <tbody>
+                {{ range .BillingPeriods }}
                 <tr>
-                  <td>FEB</td>
-                  <td>12</td>
-                  <td>03-22-2023</td>
+                  <td>{{ .Month }}</td>
+                  <td>{{ .Multiplier }}</td>
+                  <td>{{ .DueDate }}</td>
                 </tr>
-                <tr>
-                  <td>FEB</td>
-                  <td>12</td>
-                  <td>03-22-2023</td>
-                </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
@@ -47,4 +44,20 @@
     </div>
   </div>
 </div>
+{{ end }}
+{{ define "script" }}
+<script>
+  function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  }
+
+</script>
 {{ end }}
