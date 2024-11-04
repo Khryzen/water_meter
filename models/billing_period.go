@@ -9,6 +9,7 @@ import (
 type BillingPeriod struct {
 	uadmin.Model
 	Month      int
+	Year       int
 	Multiplier float64
 	DueDate    time.Time
 }

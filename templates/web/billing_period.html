@@ -24,6 +24,7 @@
               <thead>
                 <tr>
                   <th>Month</th>
+                  <th>Year</th>
                   <th>Multiplier</th>
                   <th>Due Date</th>
                 </tr>
@@ -32,6 +33,7 @@
                 {{ range .BillingPeriods }}
                 <tr>
                   <td>{{ .Month }}</td>
+                  <td>{{ .Year }}</td>
                   <td>{{ .Multiplier }}</td>
                   <td>{{ .DueDate }}</td>
                 </tr>

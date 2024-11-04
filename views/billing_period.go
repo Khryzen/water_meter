@@ -10,6 +10,7 @@ import (
 
 type Period struct {
 	Month      string
+	Year       int
 	Multiplier float64
 	DueDate    time.Time
 }
@@ -25,6 +26,7 @@ func BillingPeriodHandler(w http.ResponseWriter, r *http.Request) map[string]int
 	for i := range billing_periods {
 		periods = append(periods, Period{
 			Month:      ToMonthString(billing_periods[i].Month),
+			Year:       billing_periods[i].Year,
 			Multiplier: billing_periods[i].Multiplier,
 			DueDate:    billing_periods[i].DueDate,
 		})
