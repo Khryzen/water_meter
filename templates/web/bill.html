@@ -24,30 +24,22 @@
               <thead>
                 <tr>
                   <th>Reference Number</th>
-                  <th>Account Number</th>
+                  <th>Client</th>
                   <th>Billing Period</th>
-                  <th>Reading</th>
                   <th>Amount</th>
                   <th>Due Date</th>
                 </tr>
               </thead>
               <tbody>
+                {{ range .Bills }}
                 <tr>
-                  <td>DSFERAR</td>
-                  <td>1235134</td>
-                  <td>02-2023 to 03-2023</td>
-                  <td>123</td>
-                  <td>1234.12</td>
-                  <td>03-22-2023</td>
+                  <td>{{ .ReferenceNumber }}</td>
+                  <td>{{ .Client.FirstName }} {{ .Client.LastName }}</td>
+                  <td>{{ .BillingPeriod.Month }}/{{ .BillingPeriod.Year }}</td>
+                  <td>{{ .Amount }}</td>
+                  <td>{{ .DueDate }}</td>
                 </tr>
-                <tr>
-                  <td>DSFERAR</td>
-                  <td>1235134</td>
-                  <td>02-2023 to 03-2023</td>
-                  <td>123</td>
-                  <td>1234.12</td>
-                  <td>03-22-2023</td>
-                </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
