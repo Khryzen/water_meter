@@ -28,6 +28,7 @@
                   <th>Billing Period</th>
                   <th>Amount</th>
                   <th>Due Date</th>
+                  <th>Paid</th>
                 </tr>
               </thead>
               <tbody>
@@ -38,6 +39,13 @@
                   <td>{{ .BillingPeriod.Month }}/{{ .BillingPeriod.Year }}</td>
                   <td>{{ .Amount }}</td>
                   <td>{{ .DueDate }}</td>
+                  <td>
+                    {{ if .Paid }}
+                    <label class="badge badge-gradient-success">Paid</label>
+                    {{ else }}
+                    <label class="badge badge-gradient-danger">Pending</label>
+                    {{ end }}
+                  </td>
                 </tr>
                 {{ end }}
               </tbody>

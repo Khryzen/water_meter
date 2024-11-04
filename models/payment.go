@@ -9,6 +9,8 @@ import (
 type Payment struct {
 	uadmin.Model
 	ReferenceNumber string
+	Bill            Bill
+	BillID          uint
 	Amount          float64
 	PaymentDate     *time.Time
 }

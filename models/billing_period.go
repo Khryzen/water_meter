@@ -32,6 +32,7 @@ func (b *BillingPeriod) Save() {
 			consumption += readings[j].Consumption
 		}
 		bill.Amount = b.Multiplier * consumption
+		bill.Paid = false
 		bill.Save()
 	}
 }

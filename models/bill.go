@@ -20,6 +20,7 @@ type Bill struct {
 	BillingPeriodID uint
 	Amount          float64
 	DueDate         time.Time
+	Paid            bool
 }
 
 func (b *Bill) String() string {

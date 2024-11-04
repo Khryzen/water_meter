@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ul class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">
-          <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+          <span><button class="btn btn-primary" onclick="newPayment()">New Payment</button></span>
         </li>
       </ul>
     </nav>
@@ -24,21 +24,20 @@
               <thead>
                 <tr>
                   <th>Reference Number</th>
+                  <th>Bill Reference Number</th>
                   <th>Amount</th>
                   <th>Payment Date</th>
                 </tr>
               </thead>
               <tbody>
+                {{ range .Payments }}
                 <tr>
-                  <td>DSFERAR</td>
-                  <td>1289.02</td>
-                  <td>03-22-2023</td>
+                  <td>{{ .ReferenceNumber }}</td>
+                  <td>{{ .Bill.ReferenceNumber }}</td>
+                  <td>{{ .Amount }}</td>
+                  <td>{{ .PaymentDate }}</td>
                 </tr>
-                <tr>
-                  <td>WAREWA</td>
-                  <td>213.21</td>
-                  <td>04-21-2023</td>
-                </tr>
+                {{ end }}
               </tbody>
             </table>
           </div>
@@ -47,4 +46,100 @@
     </div>
   </div>
 </div>
+
+<!-- New Payment Modal -->
+<div class="modal fade" id="newPaymentModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Payment</h5>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="form-group">
+            <label for="bill">Bill</label>
+            <select class="form-control" id="bill" name="bill">
+              {{ range .Bills }}
+              <option value="{{ .ID }}">{{ .Client.FirstName }} {{ .Client.LastName }} - {{ .ReferenceNumber }} - {{ .Amount }}</option>
+              {{ end }}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveNewPayment()">Save changes</button>
+        <button type="button" class="btn btn-secondary" onclick="closePaymentModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+{{ define "script" }}
+<script>
+  function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+    return null;
+  }
+
+  function newPayment() {
+      $('#newPaymentModal').modal('show');
+    }
+
+    function closePaymentModal() {
+      $('#newPaymentModal').modal('hide');
+    }
+
+    function saveNewPayment() {
+      let formBody = new FormData();
+      formBody.append("_bill_id", $('#bill').val())
+      formBody.append("_amount", $('#amount').val())
+
+      fetch('/uadmin/api/d/payment/', {
+        method: "POST",
+        headers: {
+          "X-CSRF-TOKEN": getCookie('session')
+        },
+        body: formBody,
+      }).then(resp => {
+        return resp.json();
+      }).then(resp => {
+        console.log(resp)
+        $('#newPaymentModal').modal('hide');
+
+        let billEdit = new FormData
+        billEdit.append('_paid', true)
+
+        fetch('/uadmin/api/d/bill/' + $('#bill').val() + '/', {
+          method: "PUT",
+          headers: {
+            "X-CSRF-TOKEN": getCookie('session')
+          },
+          body: billEdit,
+        }).then(res => {
+          return res.json()
+        }).then(resp =>{
+          Swal.fire({
+            title: "New Payment",
+            text: "Payment saved!",
+            icon: "success",
+            timer: 2500,
+            willClose: () => {
+              window.location.reload();
+            }
+          });
+        })
+      })
+    }
+</script>
 {{ end }}
