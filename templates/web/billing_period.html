@@ -56,7 +56,7 @@
       <div class="modal-body">
         <div class="container-fluid">
           <div class="form-group">
-            <label for="address">Month</label>
+            <label for="month">Month</label>
             <select name="month" id="month" class="form-control">
               <option value="1">January</option>
               <option value="2">February</option>
@@ -88,8 +88,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="saveNewClient()">Save changes</button>
-        <button type="button" class="btn btn-secondary" onclick="closeClientModal()">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewBillingPeriod()">Save changes</button>
+        <button type="button" class="btn btn-secondary" onclick="closeBillingPeriodModal()">Close</button>
       </div>
     </div>
   </div>
@@ -112,10 +112,37 @@
     $('#newBillingPeriodModal').modal('show');
   }
 
-  function closeClientModal() {
+  function closeBillingPeriodModal() {
     $('#newBillingPeriodModal').modal('hide');
   }
 
+  function saveNewBillingPeriod(){
+    let formBody = new FormData();
+    formBody.append("_month", $('#month').val())
+    formBody.append("_year", $('#year').val())
+    formBody.append("_multiplier", $('#multiplier').val())
+    formBody.append("_due_date", $('#due_date').val())
 
+    fetch('/uadmin/api/d/billingperiod/', {
+      method: "POST",
+      headers: {
+        "X-CSRF-TOKEN": getCookie('session')
+      },
+      body: formBody,
+    }).then(resp => {
+      return resp.json();
+    }).then(resp => {
+      $('#newBillingPeriodModal').modal('hide');
+      Swal.fire({
+        title: "New Billing Period",
+        text: "New billing period saved!",
+        icon: "success",
+        timer: 2500,
+        willClose: () => {
+          window.location.reload();
+        }
+      });
+    })
+  }
 </script>
 {{ end }}

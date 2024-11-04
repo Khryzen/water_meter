@@ -32,7 +32,7 @@ func BillingPeriodHandler(w http.ResponseWriter, r *http.Request) map[string]int
 		})
 	}
 
-	context["BillingPeriods"] = billing_periods
+	context["BillingPeriods"] = periods
 	context["Title"] = "Water District | Billing Period"
 	return context
 }
@@ -66,6 +66,5 @@ func ToMonthString(month int) string {
 	} else {
 		monthStr = "Invalid"
 	}
-
 	return monthStr
 }
